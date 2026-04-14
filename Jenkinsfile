@@ -35,7 +35,7 @@ pipeline {
                 venv/bin/pip install -r requirements.txt
 
                 echo "🧪 Running tests..."
-                venv/bin/pytest tests/ || exit 1
+                PYTHONPATH=$(pwd) venv/bin/python -m pytest tests/
 
                 echo "🔐 Installing security tools..."
                 venv/bin/pip install bandit safety
@@ -45,9 +45,6 @@ pipeline {
 
                 echo "📋 Running Safety (dependency vulnerabilities)..."
                 venv/bin/safety check || true
-
-		echo "Running tests..."
-		PYTHONPATH=$(pwd) venv/bin/python -m pytest tests/
                 '''
             }
         }
