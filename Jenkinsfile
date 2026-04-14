@@ -15,7 +15,9 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/benaguida-y/tp_9_repository.git'
+		git branch:'main',
+                url: 'https://github.com/benaguida-y/tp_9_repository.git',
+		credentialsId: 'github-token'
             }
         }
 
