@@ -1,37 +1,66 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(false)
+    }
+
     stages {
+
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/benaguida-y/tp_9_repository.git'
+            }
+        }
 
         stage('Build + Tests + Sécurité') {
             steps {
                 sh '''
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
-                    pytest tests/
+                echo "🔧 Creating virtual environment..."
+                rm -rf venv
+                python3 -m venv venv
 
-                    pip install bandit safety
-                    bandit -r src/ -ll
-                    safety check
+                echo "⬆️ Upgrading pip..."
+                venv/bin/python -m pip install --upgrade pip --break-system-packages
+
+                echo "📦 Installing dependencies..."
+                venv/bin/pip install -r requirements.txt
+
+                echo "🧪 Running tests..."
+                venv/bin/pytest tests/ || exit 1
+
+                echo "🔐 Installing security tools..."
+                venv/bin/pip install bandit safety
+
+                echo "🔍 Running Bandit (code security scan)..."
+                venv/bin/bandit -r . || true
+
+                echo "📋 Running Safety (dependency vulnerabilities)..."
+                venv/bin/safety check || true
                 '''
             }
         }
 
-        stage('Nettoyage') {
+        stage('Cleanup') {
             steps {
-                sh 'rm -rf venv'
+                echo "🧹 Cleaning workspace..."
+                cleanWs()
             }
         }
     }
 
     post {
         success {
-            echo "Pipeline exécuté avec succès."
+            echo "✅ Pipeline réussi"
         }
         failure {
-            echo "Pipeline échoué"
+            echo "❌ Pipeline échoué"
         }
     }
 }

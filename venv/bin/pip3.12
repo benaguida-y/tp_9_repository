@@ -1,4 +1,4 @@
-#!/home/yb/Desktop/mon_projet_2/venv/bin/python3
+#!/home/yb/Desktop/mon_projet_2/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
