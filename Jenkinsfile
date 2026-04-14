@@ -45,6 +45,9 @@ pipeline {
 
                 echo "📋 Running Safety (dependency vulnerabilities)..."
                 venv/bin/safety check || true
+
+		echo "Running tests..."
+		PYTHONPATH=$(pwd) venv/bin/python -m pytest tests/
                 '''
             }
         }
